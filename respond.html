@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<!--
+  respond.html - 화면 2: 응답 페이지 (참여자)
+  주소: respond.html?id=모임아이디
+  참여자가 이름을 쓰고, 가능한 30분 칸을 골라 제출합니다.
+  동작 코드는 js/respond.js 에 있어요.
+-->
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>응답하기 · 모아그</title>
+  <link rel="icon" href="images/favicon.png" type="image/png">
+  <meta name="theme-color" content="#16a34a">
+
+  <!-- 링크 공유 미리보기(OG 태그)
+       참여자에게 보내는 '응답 링크'가 바로 이 페이지라서, 가장 중요한 미리보기예요.
+       ※ 미리보기는 서버가 HTML 을 보내는 순간 정해져서, JS 로 모임 이름을 바꿔 넣어도
+         카톡 미리보기에는 반영되지 않아요. 그래서 모든 모임에 맞는 공통 문구를 썼어요.
+       ※ 미리보기 사진(og:image)은 PNG/JPG 파일과 서버 주소가 필요해서 지금은 뺐어요 -->
+  <meta name="description" content="모임에 초대됐어요. 가능한 시간을 골라 주세요.">
+  <meta property="og:site_name" content="모아그">
+  <meta property="og:title" content="[모아그] 언제 가능해요?">
+  <meta property="og:description" content="모임에 초대됐어요. 가능한 시간을 골라 주세요.">
+  <meta property="og:type" content="website">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="app">
+
+    <!-- ===== 공통 헤더 ===== -->
+    <header class="header">
+      <a href="index.html" class="logo"><img class="logo-icon" src="images/logo.png" alt="">모아그</a>
+      <!-- 응답자 화면이라 '만들기', '결과(주최자용)'로 가는 링크는 두지 않음 -->
+      <span class="page-label">응답</span>
+    </header>
+
+    <main class="main">
+      <h1 class="page-title">언제 가능해요?</h1>
+      <p class="page-desc">가능한 시간을 모두 골라 주세요.</p>
+
+      <!-- 시간이 확정되면 나오는 띠 (JS 가 채움) -->
+      <div class="banner-confirmed" id="confirmed-banner" hidden></div>
+
+      <!-- 모임 정보 요약 (JS 가 채움) -->
+      <div class="info-box">
+        <strong id="info-name">불러오는 중...</strong>
+        <span id="info-detail"></span>
+      </div>
+
+      <!-- ===== 1. 이름 ===== -->
+      <section class="section">
+        <label class="section-title" for="my-name">내 이름</label>
+        <input class="input" id="my-name" type="text" maxlength="20" placeholder="이름을 입력하세요">
+        <p class="hint" id="name-hint">전에 응답했다면 같은 이름을 쓰면 수정할 수 있어요.</p>
+      </section>
+
+      <!-- ===== 2. 빠른 선택 ===== -->
+      <section class="section">
+        <span class="section-title">빠른 선택</span>
+        <!-- data-quick = 어떤 빠른 선택인지 JS 에 알려 주는 이름표 -->
+        <div class="quick-buttons">
+          <button class="chip" type="button" data-quick="weekday-evening">🌙 평일 저녁</button>
+          <button class="chip" type="button" data-quick="weekend-afternoon">☀️ 주말 오후</button>
+          <button class="chip" type="button" data-quick="day-all">✅ 이 날 전체</button>
+          <button class="chip" type="button" data-quick="reset">↺ 전체 초기화</button>
+        </div>
+        <p class="hint">평일 저녁 = 월~금 18시 이후 · 주말 오후 = 토·일 12~18시</p>
+      </section>
+
+      <!-- ===== 3. 날짜 탭 + 시간 블록 ===== -->
+      <section class="section">
+        <span class="section-title">날짜별 시간 선택</span>
+
+        <!-- 날짜 탭 (JS 가 채움)
+             active = 지금 보는 날짜, has-pick = 고른 시간이 있는 날짜(점 표시) -->
+        <div class="date-tabs" id="date-tabs"></div>
+
+        <!-- 범례 -->
+        <div class="legend" style="margin-top: 16px;">
+          <span class="legend-item"><span class="legend-box"></span>불가능</span>
+          <span class="legend-item"><span class="legend-box on"></span>가능</span>
+        </div>
+
+        <!-- ★ 시간 블록 그리드
+             비어 있는 상자예요. js/respond.js 가 여기에
+             [시간 글자][정각 블록][30분 블록] 을 줄마다 채워 넣습니다. -->
+        <div class="time-grid" id="time-grid"></div>
+
+        <p class="hint" id="select-summary"></p>
+        <p class="hint">칸을 누르면 선택/해제돼요. PC에서는 마우스로 끌어서 여러 칸을 한 번에 고를 수 있어요.</p>
+      </section>
+
+      <!-- ===== 버튼 ===== -->
+      <div class="btn-group">
+        <button class="btn" id="submit-btn" type="button">제출하기</button>
+        <a class="btn btn-outline" id="view-result" href="#">결과만 보기</a>
+      </div>
+      <p class="error" id="form-error" hidden></p>
+    </main>
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+  <script src="js/firebase-config.js"></script>
+  <script src="js/utils.js"></script>
+  <script src="js/db.js"></script>
+  <script src="js/respond.js"></script>
+</body>
+</html>

@@ -1,0 +1,9 @@
+# 운영체제/편집기가 만드는 파일 (올릴 필요 없음)
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/
+
+# Firebase CLI 가 만드는 임시 파일
+.firebase/
+*.log

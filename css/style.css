@@ -1,0 +1,921 @@
+/* =========================================================
+   모아그 - 공통 스타일 (모든 페이지가 이 파일 하나를 함께 씀)
+
+   읽는 순서
+   1. 색/크기 변수 (:root)
+   2. 기본 설정 (리셋, 글꼴)
+   3. 전체 틀 (카드, 헤더)
+   4. 공통 부품 (입력칸, 버튼, 칩)
+   5. 페이지별 스타일 (만들기 / 응답 / 결과)
+   ========================================================= */
+
+
+/* ---------- 1. 색/크기 변수 ----------
+   :root 에 변수를 모아 두면, 여기 값만 바꿔도
+   사이트 전체 색이 한 번에 바뀝니다.
+   사용법: color: var(--green-600); */
+:root {
+  /* 초록 테마 (숫자가 클수록 진함) */
+  --green-50: #f0fdf4;
+  --green-100: #dcfce7;
+  --green-200: #bbf7d0;
+  --green-300: #86efac;
+  --green-500: #22c55e;
+  --green-600: #16a34a;   /* 메인 색 */
+  --green-700: #15803d;
+  --green-900: #14532d;
+
+  /* 흰색 + 회색 */
+  --white: #ffffff;
+  --gray-100: #f3f4f6;
+  --gray-200: #e5e7eb;
+  --gray-400: #9ca3af;
+  --gray-600: #4b5563;
+  --gray-900: #1f2937;
+
+  /* 오류 안내용 빨강 */
+  --red: #dc2626;
+
+  /* 히트맵 단계별 색 (0 = 아무도 안 됨, 5 = 거의 다 됨) */
+  --heat-0: var(--gray-100);
+  --heat-1: var(--green-100);
+  --heat-2: var(--green-200);
+  --heat-3: var(--green-300);
+  --heat-4: var(--green-500);
+  --heat-5: var(--green-700);
+
+  /* 둥근 모서리 크기 */
+  --radius-sm: 10px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
+
+  /* 그림자 */
+  --shadow: 0 10px 40px rgba(21, 128, 61, 0.12);
+}
+
+
+/* ---------- 2. 기본 설정 ---------- */
+
+/* 브라우저마다 다른 기본 여백을 없애고,
+   width 에 padding/border 를 포함해서 계산하도록 설정 */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: -apple-system, "Apple SD Gothic Neo", "Malgun Gothic", "Noto Sans KR", sans-serif;
+  background: var(--green-50);
+  color: var(--gray-900);
+  line-height: 1.5;
+}
+
+/* 버튼/입력칸도 body 와 같은 글꼴을 쓰도록 */
+button,
+input,
+select {
+  font: inherit;
+  color: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+
+/* ---------- 3. 전체 틀 ---------- */
+
+/* .app = 화면 전체를 감싸는 상자
+   모바일(390px)에서는 화면을 꽉 채우고,
+   최대 430px 까지만 넓어집니다. */
+.app {
+  max-width: 430px;
+  min-height: 100vh;
+  margin: 0 auto;           /* 좌우 auto = 가운데 정렬 */
+  background: var(--white);
+}
+
+/* 화면이 600px 이상(PC/태블릿)이면 둥근 카드처럼 보이게 */
+@media (min-width: 600px) {
+  body {
+    padding: 40px 16px;
+  }
+
+  .app {
+    min-height: auto;
+    border-radius: 28px;
+    box-shadow: var(--shadow);
+    overflow: hidden;       /* 헤더 모서리도 카드처럼 둥글게 잘림 */
+  }
+}
+
+/* 상단 헤더 (로고 + 페이지 이동 링크) */
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 20px;
+  background: var(--green-600);
+  color: var(--white);
+}
+
+/* 로고 = [아이콘] + "모아그" 글자를 가로로 나란히 */
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 20px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  color: var(--white);
+  text-decoration: none;
+}
+
+/* 로고 이미지 (images/logo.png)
+   이미지 배경이 흰색이라, 모서리를 둥글게 잘라 흰 아이콘 타일처럼 보이게 해요.
+   alt="" 인 이유: 바로 옆에 "모아그" 글자가 있어서, 화면 읽기 프로그램이
+   이름을 두 번 읽지 않도록 이미지는 장식으로 처리해요. */
+.logo-icon {
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  background: var(--white);
+}
+
+/* 헤더 오른쪽 "지금 화면" 이름표 (만들기 / 응답 / 결과 중 하나) */
+.page-label {
+  padding: 6px 12px;
+  border-radius: 999px;     /* 아주 큰 값 = 알약 모양 */
+  background: var(--white);
+  color: var(--green-700);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+/* 본문 영역 */
+.main {
+  padding: 28px 20px 40px;
+}
+
+.page-title {
+  font-size: 24px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+}
+
+.page-desc {
+  margin-top: 6px;
+  color: var(--gray-600);
+  font-size: 15px;
+}
+
+/* 내용 덩어리 하나 (제목 + 내용) */
+.section {
+  margin-top: 32px;
+}
+
+.section-title {
+  display: block;
+  margin-bottom: 12px;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.hint {
+  margin-top: 8px;
+  font-size: 13px;
+  color: var(--gray-400);
+}
+
+/* 연한 초록 배경의 정보 상자 */
+.info-box {
+  margin-top: 20px;
+  padding: 16px;
+  border-radius: var(--radius-md);
+  background: var(--green-50);
+  color: var(--green-900);
+  font-size: 14px;
+}
+
+.info-box strong {
+  display: block;
+  font-size: 16px;
+  margin-bottom: 2px;
+}
+
+
+/* ---------- 4. 공통 부품 ---------- */
+
+/* 입력칸, 선택칸 */
+.input {
+  width: 100%;
+  height: 52px;
+  padding: 0 16px;
+  border: 1.5px solid var(--gray-200);
+  border-radius: var(--radius-md);
+  background: var(--white);
+  font-size: 16px;          /* 16px 미만이면 아이폰에서 자동 확대됨 */
+}
+
+/* 입력칸을 클릭했을 때(focus) 초록 테두리 */
+.input:focus {
+  outline: none;
+  border-color: var(--green-600);
+  box-shadow: 0 0 0 4px var(--green-100);
+}
+
+/* 큰 버튼 (a 태그, button 태그 모두 사용 가능) */
+.btn {
+  display: block;
+  width: 100%;
+  height: 56px;
+  border: none;
+  border-radius: 16px;
+  background: var(--green-600);
+  color: var(--white);
+  font-size: 17px;
+  font-weight: 700;
+  line-height: 56px;        /* 높이와 같게 = 글자가 세로 가운데 */
+  text-align: center;
+  text-decoration: none;
+}
+
+.btn:hover {
+  background: var(--green-700);
+}
+
+/* 흰 바탕 + 초록 테두리 버튼 */
+.btn-outline {
+  background: var(--white);
+  color: var(--green-700);
+  border: 1.5px solid var(--green-600);
+}
+
+.btn-outline:hover {
+  background: var(--green-50);
+}
+
+/* 작은 버튼 */
+.btn-small {
+  height: 40px;
+  line-height: 38px;
+  font-size: 14px;
+  border-radius: 12px;
+}
+
+/* 버튼 여러 개를 세로로 쌓을 때 사이 간격 */
+.btn-group {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 36px;
+}
+
+/* 칩 = 작은 알약 모양 선택지 */
+.chips {
+  display: flex;
+  flex-wrap: wrap;          /* 넘치면 다음 줄로 */
+  gap: 8px;
+}
+
+.chip {
+  padding: 10px 16px;
+  border: 1.5px solid var(--gray-200);
+  border-radius: 999px;
+  background: var(--white);
+  font-size: 14px;
+}
+
+.chip.selected {
+  border-color: var(--green-600);
+  background: var(--green-50);
+  color: var(--green-700);
+  font-weight: 700;
+}
+
+
+/* ---------- 5-1. 모임 만들기 (index.html) ---------- */
+
+/* 달력 위쪽 "2026년 10월 ~ 11월" 줄 */
+.cal-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  font-weight: 700;
+}
+
+.cal-arrow {
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: 50%;
+  background: var(--gray-100);
+}
+
+/* 달력: 7칸짜리 격자 (월~일) */
+.calendar {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);  /* 같은 너비 7칸 */
+  gap: 6px;
+}
+
+/* 요일 머리글 */
+.cal-head {
+  padding-bottom: 4px;
+  text-align: center;
+  font-size: 12px;
+  color: var(--gray-400);
+}
+
+/* 날짜 하나 */
+.cal-day {
+  position: relative;
+  aspect-ratio: 1;          /* 가로:세로 = 1:1 정사각형 */
+  border: none;
+  border-radius: 12px;
+  background: var(--gray-100);
+  font-size: 15px;
+}
+
+/* 고른 날짜 */
+.cal-day.selected {
+  background: var(--green-600);
+  color: var(--white);
+  font-weight: 700;
+}
+
+/* 지난 날짜 (흐리게) */
+.cal-day.past {
+  background: transparent;
+  color: var(--gray-200);
+}
+
+/* 오늘 날짜 아래 작은 점 */
+.cal-day.today::after {
+  content: "";
+  position: absolute;
+  bottom: 6px;
+  left: 50%;
+  width: 4px;
+  height: 4px;
+  margin-left: -2px;
+  border-radius: 50%;
+  background: var(--green-600);
+}
+
+/* 시작 ~ 종료 시간 한 줄 배치 */
+.time-range {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.time-range .input {
+  flex: 1;                  /* 두 선택칸이 남은 공간을 반씩 나눠 가짐 */
+}
+
+
+/* ---------- 5-2. 응답 페이지 (respond.html) ---------- */
+
+/* 날짜 탭: 가로로 쭉 늘어놓고, 넘치면 옆으로 스크롤 */
+.date-tabs {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 6px;
+}
+
+.date-tab {
+  position: relative;
+  flex: 0 0 auto;           /* 줄어들지 않고 원래 크기 유지 */
+  min-width: 58px;
+  padding: 10px 8px;
+  border: none;
+  border-radius: var(--radius-md);
+  background: var(--gray-100);
+  text-align: center;
+}
+
+.date-tab .dow {
+  display: block;
+  font-size: 12px;
+  color: var(--gray-400);
+}
+
+.date-tab .day {
+  display: block;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+/* 지금 보고 있는 탭 */
+.date-tab.active {
+  background: var(--green-600);
+  color: var(--white);
+}
+
+.date-tab.active .dow {
+  color: var(--green-100);
+}
+
+/* 이미 시간을 고른 날짜는 오른쪽 위에 초록 점 */
+.date-tab.has-pick::after {
+  content: "";
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--green-500);
+}
+
+/* 빠른 선택 버튼: 2열 격자 */
+.quick-buttons {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.quick-buttons .chip {
+  border-radius: var(--radius-md);
+}
+
+/* ★ 시간 블록 그리드
+   한 줄 = [시간 글자] [정각 블록] [30분 블록]
+   → 3칸짜리 격자. 첫 칸은 56px 고정, 나머지 두 칸은 반반 */
+.time-grid {
+  display: grid;
+  grid-template-columns: 56px 1fr 1fr;
+  gap: 6px;
+}
+
+/* 왼쪽 "19:00" 글자 */
+.time-label {
+  align-self: center;       /* 칸 안에서 세로 가운데 */
+  padding-right: 4px;
+  text-align: right;
+  font-size: 13px;
+  color: var(--gray-600);
+}
+
+/* 30분짜리 블록 하나 */
+.block {
+  height: 44px;             /* 손가락으로 누르기 편한 높이 */
+  border: 1.5px solid transparent;
+  border-radius: var(--radius-sm);
+  background: var(--gray-100);
+  font-size: 12px;
+  color: var(--gray-400);
+}
+
+/* 선택된 블록 = 초록 */
+.block.selected {
+  border-color: var(--green-600);
+  background: var(--green-500);
+  color: var(--white);
+  font-weight: 700;
+}
+
+/* 범례 (회색 = 안 됨, 초록 = 가능) */
+.legend {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 12px;
+  font-size: 13px;
+  color: var(--gray-600);
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.legend-box {
+  width: 14px;
+  height: 14px;
+  border-radius: 4px;
+  background: var(--gray-100);
+}
+
+.legend-box.on {
+  background: var(--green-500);
+}
+
+
+/* ---------- 5-3. 결과 페이지 (result.html) ---------- */
+
+/* 추천 카드 목록 */
+.top-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.top-card {
+  padding: 18px;
+  border: 1.5px solid var(--gray-200);
+  border-radius: var(--radius-lg);
+}
+
+/* 1등 카드는 강조 */
+.top-card.best {
+  border-color: var(--green-600);
+  background: var(--green-50);
+}
+
+.top-card-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* 동그란 순위 숫자 */
+.rank {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--gray-100);
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--gray-600);
+}
+
+.top-card.best .rank {
+  background: var(--green-600);
+  color: var(--white);
+}
+
+.top-when {
+  font-size: 17px;
+  font-weight: 800;
+}
+
+.top-meta {
+  margin-top: 10px;
+  font-size: 14px;
+  color: var(--gray-600);
+}
+
+.top-meta .count {
+  color: var(--green-700);
+  font-weight: 700;
+}
+
+.top-card .btn {
+  margin-top: 14px;
+}
+
+/* 히트맵을 감싸는 상자 */
+.heatmap-box {
+  padding: 16px 12px;
+  border: 1.5px solid var(--gray-200);
+  border-radius: var(--radius-lg);
+}
+
+/* ★ 히트맵: [시간 글자] + 날짜 7칸 = 8칸 격자 */
+.heatmap {
+  display: grid;
+  grid-template-columns: 40px repeat(7, 1fr);
+  gap: 3px;
+}
+
+.hm-head {
+  padding-bottom: 4px;
+  text-align: center;
+  font-size: 11px;
+  color: var(--gray-600);
+  line-height: 1.3;
+}
+
+.hm-time {
+  font-size: 10px;
+  color: var(--gray-400);
+  line-height: 16px;
+}
+
+.hm-cell {
+  height: 16px;
+  border-radius: 4px;
+}
+
+/* 단계별 색 (js/result.js 가 lv0 ~ lv5 클래스를 붙여 줌) */
+.lv0 { background: var(--heat-0); }
+.lv1 { background: var(--heat-1); }
+.lv2 { background: var(--heat-2); }
+.lv3 { background: var(--heat-3); }
+.lv4 { background: var(--heat-4); }
+.lv5 { background: var(--heat-5); }
+
+/* 히트맵 아래 "0명 ■■■■■■ 12명" */
+.heat-legend {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 3px;
+  margin-top: 12px;
+  font-size: 12px;
+  color: var(--gray-600);
+}
+
+.heat-legend .hm-cell {
+  width: 16px;
+}
+
+.heat-legend span {
+  margin: 0 4px;
+}
+
+/* 응답 현황: 숫자 상자 2개 나란히 */
+.stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.stat {
+  padding: 16px;
+  border-radius: var(--radius-md);
+  background: var(--green-50);
+  text-align: center;
+}
+
+.stat.pending {
+  background: var(--gray-100);
+}
+
+.stat-num {
+  font-size: 26px;
+  font-weight: 800;
+  color: var(--green-700);
+}
+
+.stat.pending .stat-num {
+  color: var(--gray-600);
+}
+
+.stat-label {
+  font-size: 13px;
+  color: var(--gray-600);
+}
+
+.name-list-title {
+  margin: 18px 0 8px;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--gray-600);
+}
+
+.name-chip {
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: var(--green-100);
+  color: var(--green-900);
+  font-size: 13px;
+}
+
+/* 미응답자는 점선 회색 */
+.name-chip.pending {
+  border: 1.5px dashed var(--gray-200);
+  background: var(--white);
+  color: var(--gray-400);
+}
+
+/* "주최자 화면" 작은 표시 */
+.badge {
+  display: inline-block;
+  margin-bottom: 8px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: var(--green-100);
+  color: var(--green-700);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+
+/* ---------- 5-4. 모임 생성 완료 (created.html) ---------- */
+
+.center {
+  text-align: center;
+}
+
+/* 초록 동그라미 체크 표시 */
+.done-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  height: 64px;
+  margin: 8px auto 16px;    /* 좌우 auto = 가운데 */
+  border-radius: 50%;
+  background: var(--green-600);
+  color: var(--white);
+  font-size: 32px;
+  font-weight: 800;
+}
+
+/* 제목 옆 작은 꼬리표 */
+.tag {
+  margin-left: 6px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: var(--green-100);
+  color: var(--green-700);
+  font-size: 12px;
+  font-weight: 600;
+  vertical-align: middle;
+}
+
+.tag.gray {
+  background: var(--gray-100);
+  color: var(--gray-600);
+}
+
+/* 링크 칸 + 복사 버튼 한 줄 */
+.link-row {
+  display: flex;
+  gap: 8px;
+}
+
+.link-row .input {
+  flex: 1;                  /* 링크 칸이 남은 공간을 다 차지 */
+  min-width: 0;             /* 긴 주소 때문에 칸이 밖으로 삐져나오지 않게 */
+  background: var(--gray-100);
+  font-size: 14px;
+  color: var(--gray-600);
+}
+
+.btn-copy {
+  flex: 0 0 auto;
+  padding: 0 18px;
+  border: none;
+  border-radius: var(--radius-md);
+  background: var(--green-900);
+  color: var(--white);
+  font-weight: 700;
+}
+
+/* 버튼 두 개를 반반 나란히 */
+.btn-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.btn-row .btn {
+  font-size: 15px;
+}
+
+
+/* ---------- 5-5. 실제 동작에 필요한 상태들 ---------- */
+
+/* 여러 줄 입력칸 (참여자 명단) */
+.textarea {
+  height: auto;
+  min-height: 92px;
+  padding: 14px 16px;
+  line-height: 1.5;
+  resize: vertical;         /* 세로로만 늘릴 수 있게 */
+}
+
+/* 잘못 입력했을 때 안내 문구 */
+.error {
+  margin-top: 12px;
+  color: var(--red);
+  font-size: 14px;
+  font-weight: 600;
+  text-align: center;
+}
+
+/* 저장 중 등으로 잠긴 버튼 */
+.btn:disabled {
+  background: var(--gray-400);
+  border-color: var(--gray-400);
+  color: var(--white);
+  cursor: default;
+}
+
+.cal-arrow:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+
+.cal-day:disabled {
+  cursor: default;
+}
+
+/* 시간 블록: 끄는 동안 글자가 선택되지 않게 */
+.time-grid {
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* 마우스가 있는 기기에서만 hover 효과 (터치 기기에서 색이 남는 문제 방지) */
+@media (hover: hover) {
+  .block:hover {
+    border-color: var(--green-300);
+  }
+
+  .cal-day:not(:disabled):hover {
+    outline: 2px solid var(--green-300);
+  }
+}
+
+/* 확정된 시간 띠 */
+.banner-confirmed {
+  margin-top: 20px;
+  padding: 14px 16px;
+  border-radius: var(--radius-md);
+  background: var(--green-600);
+  color: var(--white);
+  font-weight: 700;
+}
+
+/* 확정된 추천 카드 */
+.top-card.confirmed {
+  border-color: var(--green-700);
+  box-shadow: 0 0 0 3px var(--green-100);
+}
+
+/* 내용이 없을 때 안내 상자 */
+.empty {
+  padding: 28px 20px;
+  border: 1.5px dashed var(--gray-200);
+  border-radius: var(--radius-lg);
+  color: var(--gray-600);
+  font-size: 15px;
+  text-align: center;
+}
+
+/* 히트맵: 날짜가 많으면 옆으로 스크롤 */
+.heatmap-scroll {
+  overflow-x: auto;
+}
+
+.hm-head {
+  white-space: pre-line;    /* 글자 속 \n 을 줄바꿈으로 */
+}
+
+/* 응답 현황: 미응답 상자가 없을 때 한 칸만 */
+.stats.single {
+  grid-template-columns: 1fr;
+}
+
+/* 화면 아래에 잠깐 뜨는 알림 (복사 완료 등) */
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: 32px;
+  max-width: calc(100% - 32px);
+  padding: 12px 20px;
+  border-radius: 999px;
+  background: var(--gray-900);
+  color: var(--white);
+  font-size: 14px;
+  opacity: 0;
+  pointer-events: none;     /* 안 보일 때 클릭을 가로채지 않게 */
+  transform: translate(-50%, 10px);
+  transition: opacity 0.2s, transform 0.2s;   /* 부드럽게 나타나기 */
+}
+
+.toast.show {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+
+
+/* ---------- 6. 주최자 / 응답자 화면 나누기 ----------
+   기본은 응답자 화면이고, 관리 키가 맞으면 js/result.js 가
+   <body> 에 host 클래스를 붙여서 주최자 화면으로 바꿔요.
+   ※ 위쪽 .btn 등의 display 값을 덮어써야 해서 파일 맨 끝에 둡니다. */
+
+.host-only {
+  display: none;            /* 기본(응답자)에서는 주최자용 숨김 */
+}
+
+.host .host-only {
+  display: block;           /* 주최자 화면에서는 보이기 */
+}
+
+.host .badge.host-only {
+  display: inline-block;    /* 배지는 글자 크기만큼만 */
+}
+
+.host .guest-only {
+  display: none;            /* 주최자 화면에서는 응답자용 숨김 */
+}
+
+/* hidden 속성이 붙은 요소는 무조건 숨기기
+   (.chips 처럼 display 를 정해 둔 요소도 hidden 이 이기도록) */
+[hidden] {
+  display: none !important;
+}

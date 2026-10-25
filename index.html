@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<!--
+  index.html - 화면 1: 모임 만들기 (주최자)
+  모임 이름, 후보 날짜, 시간 범위, 진행 시간을 정해서 모임을 만듭니다.
+  동작 코드는 js/create.js 에 있어요.
+-->
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <!-- 모바일에서 화면 폭에 맞게 보이도록 하는 필수 설정 -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>모아그</title>
+
+  <!-- 탭 아이콘(파비콘) -->
+  <link rel="icon" href="images/favicon.png" type="image/png">
+  <!-- 휴대폰 브라우저 주소창 색을 테마 초록으로 -->
+  <meta name="theme-color" content="#16a34a">
+
+  <!-- 링크 공유 미리보기(OG 태그): 카카오톡 등에 이 주소를 보내면 뜨는 제목/설명
+       ※ 서버에 올린 뒤에야 실제로 미리보기가 보여요 -->
+  <meta name="description" content="모아서 그리는 우리들의 만남, 모아그">
+  <meta property="og:site_name" content="모아그">
+  <meta property="og:title" content="모아그 - 동아리 일정 조율">
+  <meta property="og:description" content="모아서 그리는 우리들의 만남, 모아그">
+  <meta property="og:type" content="website">
+  <!-- 공통 스타일 불러오기 -->
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="app">
+
+    <!-- ===== 공통 헤더 ===== -->
+    <header class="header">
+      <a href="index.html" class="logo"><img class="logo-icon" src="images/logo.png" alt="">모아그</a>
+      <!-- 지금 화면 이름표 (다른 화면으로 가는 링크는 일부러 두지 않음) -->
+      <span class="page-label">만들기</span>
+    </header>
+
+    <main class="main">
+      <h1 class="page-title">새 모임 만들기</h1>
+      <p class="page-desc">후보 날짜와 시간을 정하고 링크로 응답을 받을 수 있어요.</p>
+
+      <!-- ===== 1. 모임 이름 ===== -->
+      <section class="section">
+        <!-- label 의 for 와 input 의 id 를 같게 하면, 글자를 눌러도 입력칸이 선택돼요 -->
+        <label class="section-title" for="meeting-name">모임 이름</label>
+        <input class="input" id="meeting-name" type="text" maxlength="50"
+               placeholder="예) IGRUS 10월 정기 회의">
+      </section>
+
+      <!-- ===== 2. 후보 날짜 (달력) ===== -->
+      <section class="section">
+        <span class="section-title">후보 날짜</span>
+
+        <div class="cal-top">
+          <button class="cal-arrow" id="cal-prev" type="button" aria-label="이전 달">‹</button>
+          <span id="cal-title"></span>
+          <button class="cal-arrow" id="cal-next" type="button" aria-label="다음 달">›</button>
+        </div>
+
+        <!-- 요일 머리글과 날짜 버튼은 js/create.js 가 채워요 -->
+        <div class="calendar" id="calendar"></div>
+        <p class="hint" id="date-hint"></p>
+      </section>
+
+      <!-- ===== 3. 시간 범위 ===== -->
+      <section class="section">
+        <span class="section-title">시간 범위</span>
+        <div class="time-range">
+          <!-- 선택지(06:00 ~ 24:00)는 js/create.js 가 채워요 -->
+          <select class="input" id="start-hour" aria-label="시작 시간"></select>
+          <span>~</span>
+          <select class="input" id="end-hour" aria-label="종료 시간"></select>
+        </div>
+        <p class="hint">이 범위 안에서 30분 단위로 응답을 받아요.</p>
+      </section>
+
+      <!-- ===== 4. 모임 진행 시간 ===== -->
+      <section class="section">
+        <span class="section-title">모임 진행 시간</span>
+        <!-- data-minutes = 이 칩이 뜻하는 시간(분). JS 가 이 값을 읽어요 -->
+        <div class="chips" id="duration-chips">
+          <button class="chip" type="button" data-minutes="30">30분</button>
+          <button class="chip" type="button" data-minutes="60">1시간</button>
+          <button class="chip" type="button" data-minutes="90">1시간 30분</button>
+          <button class="chip selected" type="button" data-minutes="120">2시간</button>
+          <button class="chip" type="button" data-minutes="180">3시간</button>
+        </div>
+      </section>
+
+      <!-- ===== 5. 참여자 명단 (선택) ===== -->
+      <section class="section">
+        <label class="section-title" for="members">참여자 명단 <small class="tag gray">선택</small></label>
+        <textarea class="input textarea" id="members"
+                  placeholder="쉼표나 줄바꿈으로 구분해 주세요&#10;예) 김민준, 이서연, 박지호"></textarea>
+        <p class="hint">적어 두면 결과 화면에서 아직 응답하지 않은 사람을 보여 줘요.</p>
+      </section>
+
+      <!-- ===== 버튼 ===== -->
+      <div class="btn-group">
+        <button class="btn" id="create-btn" type="button">모임 만들기</button>
+      </div>
+      <!-- 잘못 입력했을 때 안내 문구가 나오는 자리 -->
+      <p class="error" id="form-error" hidden></p>
+    </main>
+  </div>
+
+  <!-- 스크립트 불러오기 (순서 중요!)
+       1~2. Firebase 라이브러리  3. 설정값  4. 도우미 함수  5. 저장 담당  6. 이 화면 코드 -->
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+  <script src="js/firebase-config.js"></script>
+  <script src="js/utils.js"></script>
+  <script src="js/db.js"></script>
+  <script src="js/create.js"></script>
+</body>
+</html>

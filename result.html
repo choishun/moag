@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<!--
+  result.html - 화면 3: 결과 페이지 (주최자 + 응답자 공용)
+  주소: result.html?id=모임아이디            → 응답자 화면
+        result.html?id=모임아이디&key=관리키 → 주최자 화면 (확정 버튼이 보임)
+  동작 코드는 js/result.js 에 있어요.
+-->
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>모임 결과 · 모아그</title>
+  <link rel="icon" href="images/favicon.png" type="image/png">
+  <meta name="theme-color" content="#16a34a">
+
+  <!-- 링크 공유 미리보기(OG 태그) - 모든 모임에 맞는 공통 문구 -->
+  <meta property="og:site_name" content="모아그">
+  <meta property="og:title" content="[모아그] 모임 결과">
+  <meta property="og:description" content="가장 많이 모일 수 있는 시간을 확인해 보세요.">
+  <meta property="og:type" content="website">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="app">
+
+    <!-- ===== 공통 헤더 ===== -->
+    <header class="header">
+      <a href="index.html" class="logo"><img class="logo-icon" src="images/logo.png" alt="">모아그</a>
+      <span class="page-label">결과</span>
+    </header>
+
+    <main class="main">
+      <!--
+        이 페이지는 주최자와 응답자가 함께 씁니다.
+        - class="host-only"  : 주최자에게만 보이는 부분
+        - class="guest-only" : 응답자에게만 보이는 부분
+        관리 키가 맞으면 js/result.js 가 <body> 에 host 클래스를 붙여요.
+      -->
+      <span class="badge host-only">👑 주최자 화면</span>
+      <h1 class="page-title" id="meeting-title">모임 결과</h1>
+      <p class="page-desc" id="meeting-desc">불러오는 중...</p>
+
+      <!-- 제출 직후에만 보이는 안내 (주소에 submitted=1 이 있을 때) -->
+      <div class="info-box" id="submitted-box" hidden>
+        <strong>응답이 제출됐어요 🎉</strong>
+        시간 확정은 주최자가 해요. 지금까지의 결과를 확인해 보세요.
+      </div>
+
+      <!-- 시간이 확정되면 나오는 띠 -->
+      <div class="banner-confirmed" id="confirmed-banner" hidden></div>
+
+      <!-- ===== 1. 추천 TOP 3 ===== -->
+      <section class="section">
+        <span class="section-title">추천 시간 TOP 3</span>
+        <!-- 카드들은 js/result.js 가 채워요 -->
+        <div class="top-list" id="top-list"></div>
+      </section>
+
+      <!-- ===== 2. 히트맵 ===== -->
+      <section class="section">
+        <span class="section-title">시간대별 가능 인원</span>
+
+        <div class="heatmap-box">
+          <!-- 날짜가 많으면 옆으로 스크롤 -->
+          <div class="heatmap-scroll">
+            <!-- ★ 비어 있는 상자. js/result.js 가 날짜 머리글과 칸들을 채워요 -->
+            <div class="heatmap" id="heatmap"></div>
+          </div>
+
+          <!-- 색 범례: 진할수록 가능한 사람이 많음 -->
+          <div class="heat-legend">
+            <span>0명</span>
+            <div class="hm-cell lv0"></div>
+            <div class="hm-cell lv1"></div>
+            <div class="hm-cell lv2"></div>
+            <div class="hm-cell lv3"></div>
+            <div class="hm-cell lv4"></div>
+            <div class="hm-cell lv5"></div>
+            <span id="legend-max">0명</span>
+          </div>
+        </div>
+        <p class="hint">칸에 마우스를 올리면 가능한 사람이 보여요.</p>
+      </section>
+
+      <!-- ===== 3. 응답 현황 ===== -->
+      <section class="section">
+        <span class="section-title">응답 현황</span>
+
+        <div class="stats" id="stats">
+          <div class="stat">
+            <div class="stat-num" id="stat-done">0명</div>
+            <div class="stat-label">응답 완료</div>
+          </div>
+          <!-- 참여자 명단을 적은 모임에서만 보여요 -->
+          <div class="stat pending" id="stat-pending-box" hidden>
+            <div class="stat-num" id="stat-pending">0명</div>
+            <div class="stat-label">미응답</div>
+          </div>
+        </div>
+
+        <p class="name-list-title">응답한 사람</p>
+        <div class="chips" id="done-names"></div>
+
+        <div id="pending-section" hidden>
+          <p class="name-list-title">아직 응답 안 한 사람</p>
+          <div class="chips" id="pending-names"></div>
+        </div>
+      </section>
+
+      <!-- ===== 버튼 ===== -->
+      <div class="btn-group">
+        <!-- 응답자용 -->
+        <a class="btn btn-outline guest-only" id="edit-link" href="#">내 응답 수정하기</a>
+        <!-- 주최자용 -->
+        <a class="btn btn-outline host-only" id="share-link" href="#">응답 링크 다시 보기</a>
+        <a class="btn btn-outline host-only" href="index.html">새 모임 만들기</a>
+      </div>
+    </main>
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+  <script src="js/firebase-config.js"></script>
+  <script src="js/utils.js"></script>
+  <script src="js/db.js"></script>
+  <script src="js/result.js"></script>
+</body>
+</html>

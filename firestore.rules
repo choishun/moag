@@ -1,0 +1,64 @@
+// =========================================================
+// firestore.rules - Firestore 보안 규칙
+// Firebase 콘솔 → Firestore Database → "규칙" 탭에 이 내용을 통째로 붙여 넣고 "게시"를 누르세요.
+//
+// 규칙이 없으면 아무나 데이터를 지우거나 고칠 수 있어서, 꼭 넣어야 해요.
+// =========================================================
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ----- 모임 -----
+    match /meetings/{meetingId} {
+      // 아이디를 아는 사람만 한 개씩 읽기 가능 (전체 목록 보기는 막음)
+      allow get: if true;
+      allow list: if false;
+
+      // 새 모임 만들기: 정해진 항목만, 알맞은 값으로
+      allow create: if request.resource.data.keys().hasOnly(
+                         ['name', 'dates', 'startHour', 'endHour', 'duration', 'members', 'confirmed', 'createdAt'])
+                    && request.resource.data.name is string
+                    && request.resource.data.name.size() > 0
+                    && request.resource.data.name.size() <= 50
+                    && request.resource.data.dates is list
+                    && request.resource.data.dates.size() > 0
+                    && request.resource.data.dates.size() <= 60
+                    && request.resource.data.startHour is int
+                    && request.resource.data.endHour is int
+                    && request.resource.data.startHour < request.resource.data.endHour
+                    && request.resource.data.duration is int
+                    && request.resource.data.members is list
+                    && request.resource.data.members.size() <= 100
+                    && request.resource.data.confirmed == null;
+
+      // 수정은 "확정 시간(confirmed)" 하나만 바꿀 수 있음
+      allow update: if request.resource.data.diff(resource.data).affectedKeys().hasOnly(['confirmed']);
+
+      // 삭제는 막음
+      allow delete: if false;
+
+      // ----- 응답 -----
+      match /responses/{responseId} {
+        allow read: if true;
+        allow create, update: if request.resource.data.keys().hasOnly(['name', 'slots', 'updatedAt'])
+                              && request.resource.data.name is string
+                              && request.resource.data.name.size() > 0
+                              && request.resource.data.name.size() <= 20
+                              && request.resource.data.slots is list
+                              && request.resource.data.slots.size() <= 3000;
+        allow delete: if false;
+      }
+    }
+
+    // ----- 관리 키 (주최자 확인용) -----
+    match /adminKeys/{key} {
+      // 키를 정확히 아는 사람만 확인 가능 (목록 보기는 막아서 키를 훔쳐볼 수 없게)
+      allow get: if true;
+      allow list: if false;
+      allow create: if request.resource.data.keys().hasOnly(['meetingId'])
+                    && request.resource.data.meetingId is string;
+      allow update, delete: if false;
+    }
+  }
+}
