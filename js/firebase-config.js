@@ -11,10 +11,10 @@
    ========================================================= */
 
 const firebaseConfig = {
-  apiKey: "",
-  authDomain: "",
-  projectId: "",
-  storageBucket: "",
-  messagingSenderId: "",
-  appId: ""
+  apiKey: "AIzaSyBXDP6SL9tIaMPneESat8R20iHHXIiOaQM",
+  authDomain: "moag-e35b4.firebaseapp.com",
+  projectId: "moag-e35b4",
+  storageBucket: "moag-e35b4.firebasestorage.app",
+  messagingSenderId: "576180418998",
+  appId: "1:576180418998:web:0f394644bde881fc3ae917"
 };
